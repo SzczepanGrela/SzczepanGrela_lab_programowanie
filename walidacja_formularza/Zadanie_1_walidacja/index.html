@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="form">
+        Imię: <input type="text" name="firstname" id="firstname"> <br>
+        Nazwisko: <input type="text" name="lastname" id="lastname"> <br>
+        Email: <input type="text" name="email" id="email"> <br>
+        <label>
+            Płeć: <br>
+            M<input type="radio" value="Mężczyzna" name="gender">
+            K<input type="radio" value="Kobieta" name="gender">
+        </label>
+        <button type="submit">Wyślij</button>
+        <p id="dane"></p>
+    </form>
+
+    <script>
+
+        const form = document.getElementById("form")
+        // const form=document/form[0]
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const firstname = document.getElementById("firstname").value;
+            const lastname = document.getElementById("lastname").value;
+            const email = document.getElementById("email").value;
+            if (!firstname || !lastname || !email) {
+                alert("Wypełniuj wszystkie pola");
+                return;
+            }
+            const firstnameCapital = firstname[0] === firstname[0].toUpperCase();
+            const lastnameCapital = lastname[0] === lastname[0].toUpperCase();
+
+            if (!firstnameCapital || !lastnameCapital) {
+                alert("Imię i nazwisko powinno zaczynać się dużej litery");
+                return;
+            }
+            const emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z]+\.[a-zA-Z]{2,4}$/;
+            const validEmail = emailRegex.test(email);
+
+            if (!validEmail) {
+                alert("Email jest niepoprawny");
+                return;
+
+            }
+            alert("Formularz jest poprawny");
+
+            var plecRadios = document.getElementsByName("gender");
+            var plec = "";
+
+            for (var i = 0; i < plecRadios.length; i++) {
+
+                if (plecRadios[i].checked) {
+                    plec = plecRadios[i].value;
+                    break;
+                }
+            }
+            let dane = document.getElementById("dane")
+            dane.innerHTML = "<p>Wprowadzone dane:</p>" +
+                "<p>Imię: " + firstname + "</p>" +
+                "<p>Nazwisko: " + lastname + "</p>" +
+                "<p>Email: " + email +
+                "<p>Płeć: " + plec + "</p>";
+
+        })
+
+    </script>
+</body>
+
+</html>

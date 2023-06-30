@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form id="form">
+        Dystans[km]: <input type="text" name="dystans" id="dystans"><br>
+        <label>
+        Jesteś z Rzeszowa?:   <input type="checkbox" name="Z_rzeszowa" id="Z_rzeszowa">
+            
+        </label><br>
+        <button type="submit">Oblicz cenę!</button>
+        <p id="dane"></p>
+    </form>
+    
+
+    <script>
+
+        const formularz = document.getElementById("form");
+        formularz.addEventListener("submit", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const dystans=document.getElementById("dystans").value;
+            const warunki = /^[0-9]+$/;
+            const valid_number = warunki.test(dystans);
+            const Z_rzeszowa=document.getElementById("Z_rzeszowa").checked;
+
+            
+            if (!valid_number){
+                alert("Odległość musi być liczbą!");
+                return;
+            }
+
+            const mnoznik_ceny=(Number(Z_rzeszowa));
+            const cena=2*dystans*(1-mnoznik_ceny);
+
+            let dane=document.getElementById("dane");
+            dane.innerHTML="<p>Dostawa wyniesie cię "+
+                cena+"zł !</p>";
+        })
+        
+
+
+
+    </script>
+</body>
+</html>

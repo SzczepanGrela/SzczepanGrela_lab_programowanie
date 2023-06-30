@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form id="form">
+
+        Ilość biletów normalnych: <input type="text" id="normalne"><br>
+        Ilość biletów ulgowych: <input type="text" id="ulgowe"><br>
+        Ilość godzin: <input type="text" id="godziny"><br>
+        <label>
+            Karta dużej rodziny <input type="checkbox" id="kdr"><br>
+        </label>
+
+        <button type="submit">Oblicz cenę!</button>
+        <p id="dane"></p>
+
+    </form>
+
+
+
+
+    <script>
+     
+        form=document.getElementById("form");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+    
+    
+        
+        const ulgowe=document.getElementById("ulgowe").value;
+        const normalne=document.getElementById("normalne").value-Math.floor(ulgowe/15);
+        const godziny=document.getElementById("godziny").value;
+        const kdr=document.getElementById("kdr").checked;
+
+        const warunki = /^[0-9]+$/;
+        const valid_numbers = warunki.test(normalne)&&warunki.test(ulgowe)&&warunki.test(godziny);
+        if(!valid_numbers){
+            alert("W pola należy wpisać liczby");
+        }
+        
+        const mnoznik_ceny=1-(0.1*Number(kdr));
+        let cena=0;
+        if(godziny>4){
+            cena=(50*normalne+25*ulgowe)*mnoznik_ceny;
+        }
+        else
+        {
+            cena=((10*normalne+5*ulgowe)*mnoznik_ceny*godziny);
+        }        
+    
+        let dane=document.getElementById("dane");
+        dane.innerHTML="<p>Cena całego pobytu wynosi "+cena+"zł</p>";
+        
+
+        })
+    </script>
+    
+</body>
+</html>

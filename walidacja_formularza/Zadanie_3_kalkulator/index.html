@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #form{
+            width:600px;
+            height: 600px;
+            border: solid black;
+            justify-content:center ;
+            padding: 20px;
+            
+        }
+        #wynik{
+            height: 40px;
+            padding: 20px;
+            font-size: 60px;
+            text-align: right;
+        }
+        .przycisk{
+            height: 90px;
+            width: 140px;
+            font-size: 60px;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            
+            
+        }
+    </style>
+
+
+    <script>
+
+        function is_operator(a){
+
+            if(isNaN(Number(a))){
+                return true;
+            }
+            return false;
+        }
+        function nowy_znak(a){
+            let wynik=document.getElementById("wynik").value
+            if (wynik[wynik.length-1]=="0" && typeof a=="number"){ 
+                                       //liczba następująca po zerze(będącym początkiem liczby) , usuwa zero z ciągu znaków
+                
+                if(wynik.length<=1 || is_operator(wynik[wynik.length-2])) 
+                {
+                    document.getElementById("wynik").value=wynik.substring(0,wynik.length-1)+a;  //drugi if la wiekszej czytelnosci
+                    return;
+                }
+                
+            }
+            else if(is_operator(wynik[wynik.length-1])&&is_operator(a)){    //gdy ostatnim znakiem jest operator, wciśnięcie innego operatora zmieni ostatni element ciągu
+
+                document.getElementById("wynik").value=wynik.substring(0,wynik.length-1)+a;
+                return;
+            }
+            document.getElementById("wynik").value+=a;   //w pozostałych przypadkach ciąg będzie miał dodatkowy znak
+            return;
+        }
+
+
+        function dzialanie(a,b,operator){
+
+            if(operator=="+") return a+b;
+            if(operator=="-") return a-b;
+            if(operator=="*") return a*b;
+            if(operator=="/") return a/b;
+
+        }
+
+
+
+
+        function rownanie(){
+            let liczba=i=j=k=l=holder=operator=0;
+            liczba=2;
+            
+            let tab_elementow=[];
+            let tab_operatorow=[];
+            let comma=false;
+            liczba=liczba*10;
+            wynik=document.getElementById("wynik").value;
+            while(i<wynik.length)
+            {
+                
+
+                    if(wynik[i]==",")  comma=true;
+                    else if(is_operator(wynik[i])&&wynik[i]!=",") 
+                    {
+                        comma=false;
+                        tab_operatorow[k]=wynik[i];            // operatorow jest n-1 w porpownaniu do liczb
+                        tab_elementow[k++]=Number(liczba);
+                        liczba=0;
+                        j=0;
+                    }
+                    if(comma && !is_operator(wynik[i])) liczba+=Number(wynik[i])/(10**++j);
+                    else if(!is_operator(wynik[i])) liczba*=10+Number(wynik[i]);
+                    
+                i++;
+            }
+
+            i=j=0;
+            
+            let najw=0;
+            while(i<tab_operatorow.length){
+
+                while(j<tab_operatorow.length){
+                    najw=0;
+                    if(tab_operatorow[j]=="*"||tab_operatorow[j]=="/") // wuszukuje najbliższego operatora z większą wagą
+                    {
+                        najw=j;
+                        break;
+                    }
+                    else if(tab_operatorow[j]=="+"||tab_operatorow[j]=="-") najw=j;  //gdy nie znajdzie mnożenia lub dzielenia, wykonuje operacje na ostatnim operatorze w tablicy
+                    
+                }
+                j=i=0;
+               
+                while(isNaN(tab_elementow[najw-i++]))
+                {  
+
+                    
+                }
+                while(isNaN(tab_elementow[najw+++j]))
+                {  
+
+                    
+                }
+                a=tab_elementow[najw-i];
+                b=tab_elementow[najw+j];
+
+                operator=tab_operatorow[najw];
+
+                holder=dzialanie(a,b,operator);
+                delete tab_operatorow[najw];
+                delete tab_elementow[najw-i];
+                delete tab_elementow[najw+j];    
+            
+            }
+
+
+            
+
+
+
+            
+
+
+                        
+
+            
+                
+
+                                  
+
+            
+            
+
+        }
+
+        function usun(){
+            wynik=document.getElementById("wynik").value=0;
+            return;
+        }
+
+
+
+    </script>
+</head>
+<body>
+
+    <form id="form" >
+        <p id="data"></p>
+        <div class="div">
+            <center>
+            <input type="text" readonly size="14" value="0" id="wynik" height="100">
+            <input type="button" value="C" id="C" class="przycisk" onclick="usun()">
+            </center>
+        </div>
+
+        <input type="button" value="7" id="7" class="przycisk" onclick='nowy_znak(7)'> 
+        <input type="button" value="8" id="8" class="przycisk"onclick='nowy_znak(8)'> 
+        <input type="button" value="9" id="9" class="przycisk"onclick='nowy_znak(9)'>
+        <input type="button" value="/" id="/" class="przycisk"onclick='nowy_znak("/")'> 
+
+        <input type="button" value="4" id="4" class="przycisk"onclick='nowy_znak(4)'> 
+        <input type="button" value="5" id="5" class="przycisk"onclick='nowy_znak(5)'> 
+        <input type="button" value="6" id="6" class="przycisk"onclick='nowy_znak(6)'> 
+        <input type="button" value="*" id="*" class="przycisk"onclick='nowy_znak("*")'> 
+        
+        <input type="button" value="1" id="1" class="przycisk"onclick='nowy_znak(1)'> 
+        <input type="button" value="2" id="2" class="przycisk"onclick='nowy_znak(2)'> 
+        <input type="button" value="3" id="3" class="przycisk"onclick='nowy_znak(3)'> 
+        <input type="button" value="-" id="-" class="przycisk"onclick='nowy_znak("-")'> 
+        
+        <input type="button" value="0" id="0" class="przycisk"onclick='nowy_znak(0)'> 
+        <input type="button" value="," id="," class="przycisk"onclick='nowy_znak(",")'>
+        <input type="button" value="=" id="=" class="przycisk"onclick='rownanie()'>
+        <input type="button" value="+" id="+" class="przycisk"onclick='nowy_znak("+")'> 
+
+
+
+
+        
+
+    </form>
+    
+</body>
+</html>
