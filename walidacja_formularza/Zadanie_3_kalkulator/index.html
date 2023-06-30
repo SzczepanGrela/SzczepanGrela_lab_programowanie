@@ -1,169 +1,139 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        #form{
-            width:600px;
+        #form {
+            width: 600px;
             height: 600px;
             border: solid black;
-            justify-content:center ;
+            justify-content: center;
             padding: 20px;
-            
         }
-        #wynik{
+
+        #wynik {
             height: 40px;
             padding: 20px;
             font-size: 60px;
             text-align: right;
         }
-        .przycisk{
+
+        .przycisk {
             height: 90px;
             width: 140px;
             font-size: 60px;
             padding: 0;
             margin: 0;
             box-sizing: border-box;
-            
-            
         }
     </style>
 
-
     <script>
 
-        function is_operator(a){
+        function is_operator(a) {    //nazwa jest myląca, funkcja zwraca wartość true dla wszystkich charów niebędących cyframi. (false dla 0-9)
 
-            if(isNaN(Number(a))){
-                return true;
-            }
+            if (isNaN(Number(a))) return true;
+
             return false;
         }
-        function nowy_znak(a){
-            let wynik=document.getElementById("wynik").value
-            if (wynik[wynik.length-1]=="0" && typeof a=="number"){ 
-                                       //liczba następująca po zerze(będącym początkiem liczby) , usuwa zero z ciągu znaków
-                
-                if(wynik.length<=1 || is_operator(wynik[wynik.length-2])) 
-                {
-                    document.getElementById("wynik").value=wynik.substring(0,wynik.length-1)+a;  //drugi if la wiekszej czytelnosci
+
+        function nowy_znak(a) {
+            let wynik = document.getElementById("wynik").value
+            if (wynik[wynik.length - 1] == "0" && typeof a == "number") {
+                //liczba następująca po zerze(będącym początkiem liczby) , usuwa zero z ciągu znaków
+
+                if (wynik.length <= 1 || is_operator(wynik[wynik.length - 2])) {
+                    document.getElementById("wynik").value = wynik.substring(0, wynik.length - 1) + a;  //drugi if la wiekszej czytelnosci
                     return;
                 }
-                
-            }
-            else if(is_operator(wynik[wynik.length-1])&&is_operator(a)){    //gdy ostatnim znakiem jest operator, wciśnięcie innego operatora zmieni ostatni element ciągu
 
-                document.getElementById("wynik").value=wynik.substring(0,wynik.length-1)+a;
+            }
+            else if (is_operator(wynik[wynik.length - 1]) && is_operator(a)) {    //gdy ostatnim znakiem jest operator, wciśnięcie innego operatora zmieni ostatni element ciągu
+
+                document.getElementById("wynik").value = wynik.substring(0, wynik.length - 1) + a;
                 return;
             }
-            document.getElementById("wynik").value+=a;   //w pozostałych przypadkach ciąg będzie miał dodatkowy znak
+            document.getElementById("wynik").value += a;   //w pozostałych przypadkach ciąg będzie miał dodatkowy znak
             return;
         }
 
+        function dzialanie(a, b, operator) {  //prosta funkcja zwracająca wynik działania
 
-        function dzialanie(a,b,operator){
-
-            if(operator=="+") return a+b;
-            if(operator=="-") return a-b;
-            if(operator=="*") return a*b;
-            if(operator=="/") return a/b;
-
+            if (operator == "+") return a + b;
+            if (operator == "-") return a - b;
+            if (operator == "*") return a * b;
+            if (operator == "/") return a / b;
         }
 
+        function rownanie() {
+            let liczba = i = j = k = najw = 0;   // i oraz j stanowią iteratory pętli. k jest indexem tablic z liczbami i operatorami
+            let tab_elementow = [];
+            let tab_operatorow = [];                     //zmienna comma pomoże w wartościach zmiennoprzecinkowych, niestety zapobieganie wpisywania drugiego przecinka w jednej liczbie wiąże się z dodatkowymi pętlami i postanowiłem bardziej kodu nie kompikować
+            let comma = false;
 
+            wynik = document.getElementById("wynik").value;
 
+            while (i < wynik.length) {
 
-        function rownanie(){
-            let liczba=i=j=k=l=holder=operator=0;
-            liczba=2;
-            
-            let tab_elementow=[];
-            let tab_operatorow=[];
-            let comma=false;
-            liczba=liczba*10;
-            wynik=document.getElementById("wynik").value;
-            while(i<wynik.length)
-            {
-                
+                if (wynik[i] == "," || wynik[i] == ".") comma = true;         //gdy pętla wykruje przecinek lub kropkę, do następnego operatora(+-/*) wszystkie kolejne cyfry będzie trakować jako 10krotnie mniejsze
+                else if (is_operator(wynik[i]) && wynik[i] != "," && wynik[i] != ".") // gdy wynik[i] jest operatorem innym niż przecinek/kropka, następuje zerowanie zmiennej comma, zapisanie operatora oraz zapisanej do tej pory liczby
+                {
+                    comma = false;
+                    tab_operatorow[k] = wynik[i];            // operatorow jest n-1 w porpownaniu do liczb
+                    tab_elementow[k++] = Number(liczba);
+                    liczba = 0;
+                    j = 0;
+                }
+                else if (comma && !is_operator(wynik[i]))             //gdy comma==true każda kolejna cyfra jest mnozona przez 10^(-j) 
+                    liczba = liczba + Number(wynik[i]) / (10 ** ++j);
 
-                    if(wynik[i]==",")  comma=true;
-                    else if(is_operator(wynik[i])&&wynik[i]!=",") 
-                    {
-                        comma=false;
-                        tab_operatorow[k]=wynik[i];            // operatorow jest n-1 w porpownaniu do liczb
-                        tab_elementow[k++]=Number(liczba);
-                        liczba=0;
-                        j=0;
-                    }
-                    if(comma && !is_operator(wynik[i])) liczba+=Number(wynik[i])/(10**++j);
-                    else if(!is_operator(wynik[i])) liczba*=10+Number(wynik[i]);
-                    
+                else liczba = 10 * liczba + Number(wynik[i]);          //gdy żaden poprzedni warunek się nie spełnił, liczba mnożona jest 10krotnie i dodajemy do niej wartość tab[i]
+
                 i++;
             }
+            tab_elementow[k++] = Number(liczba);  // w tym miejscu, po zakończeniu pętli zapisana jest ostatnia liczba do tablicy z liczbami.
+            i = j = 0;
 
-            i=j=0;
-            
-            let najw=0;
-            while(i<tab_operatorow.length){
 
-                while(j<tab_operatorow.length){
-                    najw=0;
-                    if(tab_operatorow[j]=="*"||tab_operatorow[j]=="/") // wuszukuje najbliższego operatora z większą wagą
+            while (i < tab_operatorow.length) {
+
+                while (j < tab_operatorow.length) {
+                    najw = 0;   //zerowanie indeksu największego operatora przy poczatku pętli
+                    if (tab_operatorow[j] == "*" || tab_operatorow[j] == "/") // wyszukuje najbliższego operatora z największą wagą
                     {
-                        najw=j;
-                        break;
+                        najw = j;
+                        break; // po znalezeniu operatora * lub / pętla się przerywa 
                     }
-                    else if(tab_operatorow[j]=="+"||tab_operatorow[j]=="-") najw=j;  //gdy nie znajdzie mnożenia lub dzielenia, wykonuje operacje na ostatnim operatorze w tablicy
-                    
+                    else if (tab_operatorow[j] == "+" || tab_operatorow[j] == "-") najw = j;  //gdy nie znajdzie mnożenia lub dzielenia, wykonuje operacje na ostatnim operatorze w tablicy
+                    j++;
                 }
-                j=i=0;
-               
-                while(isNaN(tab_elementow[najw-i++]))
-                {  
+                j = i = 0;
 
-                    
+                while (isNaN(tab_elementow[najw - i++])) // nieeleganckie pętle szukające najbliższych do indeksu najw liczb (w celu zachowania kolejności wykonywania działań )
+                {
                 }
-                while(isNaN(tab_elementow[najw+++j]))
-                {  
-
-                    
+                while (isNaN(tab_elementow[++j + najw])) {
                 }
-                a=tab_elementow[najw-i];
-                b=tab_elementow[najw+j];
+                let a = tab_elementow[najw - i + 1];      // zmienne a,b i operator są zbędne, jedynym ich celem  jest większa czytelność wywyołania funkcji działanie
+                let b = tab_elementow[najw + j];
+                let operator = tab_operatorow[najw];
 
-                operator=tab_operatorow[najw];
+                tab_elementow[najw - i + 1] = dzialanie(a, b, operator);  // wynik zawsze jest zapisywany na indeksie liczby a (mniejszym), dzięki temu końcowy wynik zawsze znajdzie się na tab_elementów[0]
 
-                holder=dzialanie(a,b,operator);
-                delete tab_operatorow[najw];
-                delete tab_elementow[najw-i];
-                delete tab_elementow[najw+j];    
-            
+
+                delete tab_operatorow[najw];   //usuwanie niepotrzebnych już elemementów i operatorów
+                delete tab_elementow[najw + j];
             }
 
-
-            
-
-
-
-            
-
-
-                        
-
-            
-                
-
-                                  
-
-            
-            
-
+            document.getElementById("wynik").value = tab_elementow[0];  //wyświetlenie wyniku
         }
 
-        function usun(){
-            wynik=document.getElementById("wynik").value=0;
+
+        function usun() {    //prosta funkcja przypisująca wynikowi wartość 0
+            wynik = document.getElementById("wynik").value = 0;
             return;
         }
 
@@ -171,43 +141,45 @@
 
     </script>
 </head>
+
 <body>
 
-    <form id="form" >
+    <form id="form">
         <p id="data"></p>
         <div class="div">
             <center>
-            <input type="text" readonly size="14" value="0" id="wynik" height="100">
-            <input type="button" value="C" id="C" class="przycisk" onclick="usun()">
+                <input type="text" readonly size="14" value="0" id="wynik" height="100">
+                <input type="button" value="C" id="C" class="przycisk" onclick="usun()">
             </center>
         </div>
 
-        <input type="button" value="7" id="7" class="przycisk" onclick='nowy_znak(7)'> 
-        <input type="button" value="8" id="8" class="przycisk"onclick='nowy_znak(8)'> 
-        <input type="button" value="9" id="9" class="przycisk"onclick='nowy_znak(9)'>
-        <input type="button" value="/" id="/" class="przycisk"onclick='nowy_znak("/")'> 
+        <input type="button" value="7" id="7" class="przycisk" onclick='nowy_znak(7)'>
+        <input type="button" value="8" id="8" class="przycisk" onclick='nowy_znak(8)'>
+        <input type="button" value="9" id="9" class="przycisk" onclick='nowy_znak(9)'>
+        <input type="button" value="/" id="/" class="przycisk" onclick='nowy_znak("/")'>
 
-        <input type="button" value="4" id="4" class="przycisk"onclick='nowy_znak(4)'> 
-        <input type="button" value="5" id="5" class="przycisk"onclick='nowy_znak(5)'> 
-        <input type="button" value="6" id="6" class="przycisk"onclick='nowy_znak(6)'> 
-        <input type="button" value="*" id="*" class="przycisk"onclick='nowy_znak("*")'> 
-        
-        <input type="button" value="1" id="1" class="przycisk"onclick='nowy_znak(1)'> 
-        <input type="button" value="2" id="2" class="przycisk"onclick='nowy_znak(2)'> 
-        <input type="button" value="3" id="3" class="przycisk"onclick='nowy_znak(3)'> 
-        <input type="button" value="-" id="-" class="przycisk"onclick='nowy_znak("-")'> 
-        
-        <input type="button" value="0" id="0" class="przycisk"onclick='nowy_znak(0)'> 
-        <input type="button" value="," id="," class="przycisk"onclick='nowy_znak(",")'>
-        <input type="button" value="=" id="=" class="przycisk"onclick='rownanie()'>
-        <input type="button" value="+" id="+" class="przycisk"onclick='nowy_znak("+")'> 
+        <input type="button" value="4" id="4" class="przycisk" onclick='nowy_znak(4)'>
+        <input type="button" value="5" id="5" class="przycisk" onclick='nowy_znak(5)'>
+        <input type="button" value="6" id="6" class="przycisk" onclick='nowy_znak(6)'>
+        <input type="button" value="*" id="*" class="przycisk" onclick='nowy_znak("*")'>
 
+        <input type="button" value="1" id="1" class="przycisk" onclick='nowy_znak(1)'>
+        <input type="button" value="2" id="2" class="przycisk" onclick='nowy_znak(2)'>
+        <input type="button" value="3" id="3" class="przycisk" onclick='nowy_znak(3)'>
+        <input type="button" value="-" id="-" class="przycisk" onclick='nowy_znak("-")'>
 
+        <input type="button" value="0" id="0" class="przycisk" onclick='nowy_znak(0)'>
+        <input type="button" value="," id="," class="przycisk" onclick='nowy_znak(",")'>
+        <input type="button" value="=" id="=" class="przycisk" onclick='rownanie()'>
+        <input type="button" value="+" id="+" class="przycisk" onclick='nowy_znak("+")'>
 
 
-        
+
+
+
 
     </form>
-    
+
 </body>
+
 </html>
