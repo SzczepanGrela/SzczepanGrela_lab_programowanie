@@ -69,7 +69,7 @@
         }
 
         function rownanie() {
-            let liczba = i = j = k = najw = 0;   // i oraz j stanowią iteratory pętli. k jest indexem tablic z liczbami i operatorami
+            let liczba = i = j = k = operator = a = b = najw = iter1 = iter2 = 0;   // i oraz j stanowią iteratory pętli. k jest indexem tablic z liczbami i operatorami
             let tab_elementow = [];
             let tab_operatorow = [];                     //zmienna comma pomoże w wartościach zmiennoprzecinkowych, niestety zapobieganie wpisywania drugiego przecinka w jednej liczbie wiąże się z dodatkowymi pętlami i postanowiłem bardziej kodu nie kompikować
             let comma = false;
@@ -99,9 +99,10 @@
 
 
             while (i < tab_operatorow.length) {
-
+                j=0;
+                najw = 0;   //zerowanie indeksu największego operatora przy poczatku pętli
                 while (j < tab_operatorow.length) {
-                    najw = 0;   //zerowanie indeksu największego operatora przy poczatku pętli
+                    
                     if (tab_operatorow[j] == "*" || tab_operatorow[j] == "/") // wyszukuje najbliższego operatora z największą wagą
                     {
                         najw = j;
@@ -110,22 +111,23 @@
                     else if (tab_operatorow[j] == "+" || tab_operatorow[j] == "-") najw = j;  //gdy nie znajdzie mnożenia lub dzielenia, wykonuje operacje na ostatnim operatorze w tablicy
                     j++;
                 }
-                j = i = 0;
+                iter1 = iter2 = 0;
 
-                while (isNaN(tab_elementow[najw - i++])) // nieeleganckie pętle szukające najbliższych do indeksu najw liczb (w celu zachowania kolejności wykonywania działań )
+                while (isNaN(tab_elementow[najw - iter1++])) // nieeleganckie pętle szukające najbliższych do indeksu najw liczb (w celu zachowania kolejności wykonywania działań )
                 {
                 }
-                while (isNaN(tab_elementow[++j + najw])) {
+                while (isNaN(tab_elementow[++iter2 + najw])) {
                 }
-                let a = tab_elementow[najw - i + 1];      // zmienne a,b i operator są zbędne, jedynym ich celem  jest większa czytelność wywyołania funkcji działanie
-                let b = tab_elementow[najw + j];
-                let operator = tab_operatorow[najw];
+                a = tab_elementow[najw - iter1 + 1];      // zmienne a,b i operator są zbędne, jedynym ich celem  jest większa czytelność wywyołania funkcji działanie
+                b = tab_elementow[najw + iter2];
+                operator = tab_operatorow[najw];
 
-                tab_elementow[najw - i + 1] = dzialanie(a, b, operator);  // wynik zawsze jest zapisywany na indeksie liczby a (mniejszym), dzięki temu końcowy wynik zawsze znajdzie się na tab_elementów[0]
+                tab_elementow[najw - iter1 + 1] = dzialanie(a, b, operator);  // wynik zawsze jest zapisywany na indeksie liczby a (mniejszym), dzięki temu końcowy wynik zawsze znajdzie się na tab_elementów[0]
 
 
                 delete tab_operatorow[najw];   //usuwanie niepotrzebnych już elemementów i operatorów
-                delete tab_elementow[najw + j];
+                delete tab_elementow[najw + iter2];
+                i++;
             }
 
             document.getElementById("wynik").value = tab_elementow[0];  //wyświetlenie wyniku
